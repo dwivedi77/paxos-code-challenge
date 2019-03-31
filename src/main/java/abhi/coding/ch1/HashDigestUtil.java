@@ -40,18 +40,24 @@ public final class HashDigestUtil {
         }
     }
 
-    public static String encode(String message){
+    public String encode(String message){
         digester.update(message.getBytes());
         byte[] hash = digester.digest();
-        String key = new String(hash);
-        _theCache.put(key, message);
-        return key;
+        String hexValue = byteToHex(hash);
+        _theCache.put(hexValue, message);
+        return hexValue;
     }
 
-    public static String decode(String encodedMsg){
+    private String byteToHex(byte[] hash) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hash) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
+    public String decode(String encodedMsg){
         return _theCache.get(encodedMsg);
     }
 
 }
-
-

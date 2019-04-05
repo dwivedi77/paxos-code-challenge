@@ -3,47 +3,48 @@ package abhi.coding.ch1.rest;
 import abhi.coding.ch1.HashDigestUtil;
 import abhi.coding.ch1.model.Digest;
 import abhi.coding.ch1.model.Message;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * Created by Abhishek on 3/24/2019.
  */
-@Path("messages")
+@RestController
+@RequestMapping("/messages")
 public class MessageDigesterResource {
+
+    private final Log logger = LogFactory.getLog(MessageDigesterResource.class);
 
     private final HashDigestUtil util = HashDigestUtil.getInstance();
 
-//    @Path("/hi")
-//    @GET
-//    public String getHello(){
-//        return "Hi Hello";
-//    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{hash}")
-    public Response getDigestedMsg(@PathParam("hash") String hash){
+    @RequestMapping(value = "/{hash}", produces = "application/json", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<Message> getDigestedMsg(@PathVariable("hash") String hash){
+        logger.info("Request received for hash="+hash);
         String origMsg = util.decode(hash);
+        logger.info("Orig msg for hash="+hash);
         if (origMsg == null || "".equals(origMsg)){
-            String err_msg = "kuchh to gabbad hai";
-//            Response.
-            return Response.status(404).entity(err_msg).build();
+            String err_msg = "Message not found";
+            logger.info("Returning error response");
+            return new ResponseEntity<Message>(new Message(err_msg), HttpStatus.NOT_FOUND);
         }
-//        Message msg = new Message();
-//        msg.setMessage(origMsg);
-        return Response.status(200).entity(origMsg).build();
+        logger.info("Returning success response");
+        return new ResponseEntity<Message>(new Message(origMsg), HttpStatus.OK);
     }
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/")
-    public Response digestMessage(String message){
-        String hash = util.encode(message);
+    @RequestMapping(value = "/", consumes = "application/json", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Digest> digestMessage(@RequestBody Message message){
+        logger.info("Request received to digest");
+        String hash = util.encode(message.getMessage());
         Digest digested = new Digest(hash);
-        return Response.status(200).entity(digested).build();
+        logger.info("Returning success response");
+        return  new ResponseEntity<Digest>(digested, HttpStatus.OK);
     }
+
 }

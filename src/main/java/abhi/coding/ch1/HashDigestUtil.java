@@ -1,5 +1,8 @@
 package abhi.coding.ch1;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -9,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by Abhishek on 3/17/2019.
  */
 public final class HashDigestUtil {
+    private static final Log logger = LogFactory.getLog(HashDigestUtil.class);
 
     private static MessageDigest digester;
 
@@ -30,7 +34,8 @@ public final class HashDigestUtil {
                         instance = new HashDigestUtil(digester);
                         initialized = true;
                     } catch (NoSuchAlgorithmException e) {
-                        // TODO handle it well.
+                        logger.error("Error creating HashDigestUtil instance.", e);
+                        throw new RuntimeException("Fatal Error, server can not start.");
                     }
                 }
             }

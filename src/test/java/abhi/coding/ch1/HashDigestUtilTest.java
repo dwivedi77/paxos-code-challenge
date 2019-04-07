@@ -1,15 +1,19 @@
 package abhi.coding.ch1;
 
-import org.junit.Assert;
+import abhi.coding.AppConfig;
+import abhi.coding.ch1.util.HashDigestUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Created by Abhishek on 3/22/2019.
  */
-@RunWith(BlockJUnit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@Import(AppConfig.class)
 public class HashDigestUtilTest {
 
     HashDigestUtil util;
@@ -23,7 +27,5 @@ public class HashDigestUtilTest {
         String msg = "Very very crypted msg";
         String encoded = util.encode(msg);
         System.out.println("encoded = " + encoded);
-        String decoded = util.decode(encoded);
-        Assert.assertEquals(decoded, msg);
     }
 }

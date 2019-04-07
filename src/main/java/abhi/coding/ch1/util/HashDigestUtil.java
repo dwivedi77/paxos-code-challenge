@@ -1,12 +1,10 @@
-package abhi.coding.ch1;
+package abhi.coding.ch1.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Abhishek on 3/17/2019.
@@ -15,8 +13,6 @@ public final class HashDigestUtil {
     private static final Log logger = LogFactory.getLog(HashDigestUtil.class);
 
     private static MessageDigest digester;
-
-    private static final Map<String, String> _theCache = new ConcurrentHashMap<>();
 
     private static boolean initialized = false;
     private static HashDigestUtil instance = null;
@@ -49,7 +45,6 @@ public final class HashDigestUtil {
         digester.update(message.getBytes());
         byte[] hash = digester.digest();
         String hexValue = byteToHex(hash);
-        _theCache.put(hexValue, message);
         return hexValue;
     }
 
@@ -59,10 +54,6 @@ public final class HashDigestUtil {
             sb.append(String.format("%02x", b));
         }
         return sb.toString();
-    }
-
-    public String decode(String encodedMsg){
-        return _theCache.get(encodedMsg);
     }
 
 }
